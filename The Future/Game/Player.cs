@@ -10,7 +10,7 @@ namespace The_Future
 {
     public class Player
     {
-        Texture2D playerTexture;
+        public Texture2D playerTexture;
 
         private Vector2 position;
         public Vector2 Position { get { return velocity; } private set { velocity = value; } }
@@ -23,6 +23,14 @@ namespace The_Future
             playerTexture = content.Load<Texture2D>("sprite");
         }
 
+        /// <summary>
+        /// If player goes to next map
+        /// </summary>
+        public void SetPosition(Vector2 position)
+        {
+            this.Position = position;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(playerTexture, position, null, Color.White, 0, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), 1, SpriteEffects.None, 1);
@@ -30,7 +38,7 @@ namespace The_Future
 
         public void UpdatePosition()
         {
-            UpdateVelocity();
+            //UpdateVelocity();
 
             position += velocity;
 

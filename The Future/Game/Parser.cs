@@ -8,98 +8,23 @@ using System.Text.RegularExpressions;
 
 namespace The_Future
 {
-    //None means input file is not created correctly
-    enum RenderFlag
+    public class Parser
     {
-        None,
-        Repeat,
-        Stretch
-    }
+        public static string currentLevelName { get; private set; } = "";
 
-    enum CollisionFlag
-    {
-        None,
-        Static,
-        LevelChange
-    }
-
-    class MapObject
-    {
-        public Vector2 Position { get; set; }
-        public Vector2 Dimension { get; set; }
-        public bool IsRenderable { get; set; }
-        public RenderFlag RenderFlag { get; set; }
-        public CollisionFlag CollisionFlag { get; set; }
-        public Vector2 SpritePositionInAtlas { get; set; }
-        public Vector2 SpriteDimensionInAtlas { get; set; }
-        public bool IsCollidable { get; set; }
-        public bool IsCollisionResponseStatic { get; set; }
-        public bool IsLevelChange { get; set; }
-
-        public MapObject(Vector2 position, Vector2 dimension)
-        {
-            Position = position;
-            Dimension = dimension;
-        }
-
-        public void AddRenderAttribute(Vector2 spritePositionInAtlas, Vector2 spriteDimensionInAtlas, RenderFlag renderFlag)
-        {
-            IsRenderable = true;
-            RenderFlag = renderFlag;
-            SpritePositionInAtlas = spritePositionInAtlas;
-            SpriteDimensionInAtlas = spriteDimensionInAtlas;
-        }
-
-        public void AddCollisionAttribute(CollisionFlag collisionFlag)
-        {
-            IsCollidable = true;
-
-            switch (collisionFlag)
-            {
-                case CollisionFlag.Static:
-                    IsCollisionResponseStatic = true;
-                    break;
-
-                case CollisionFlag.LevelChange:
-                    IsLevelChange = true;
-                    break;
-
-            }
-        }
-    }
-
-    class MapAttributes
-    {
-        public Vector2 PlayerSpawn { get; set; }
-        public Dictionary<string, Vector2> PlayerTransitionFromLevel = new Dictionary<string, Vector2>();
-
-        public MapAttributes()
-        {
-            PlayerSpawn = new Vector2(0, 0);
-        }
-    }
-
-    class Map 
-    {
-        public string TexturePath { get; set; }
-        public MapObject[] MapObjects { get; set; }
-        public MapAttributes MapAttributes { get; set; }
-    }
-
-
-    class Parser
-    {
-        public static Map LoadLevel(string path)
+        public static Map LoadLevel(Map map, string path)
         {
             StreamReader sr = new StreamReader(path);
 
             string currentLine;
             string[] tokens;
             string[] values;
-            Map map = new Map();
             List<MapObject> mapObjects = new List<MapObject>();
             MapObject nextObject;
             MapAttributes mapAttributes = new MapAttributes();
+
+            mapAttributes.PreviousMapName = currentLevelName;
+            currentLevelName = Path.GetFileName(path);
 
             try
             {
@@ -212,6 +137,8 @@ namespace The_Future
 
                                         case "LEVEL_CHANGE":
                                             collisionFlag = CollisionFlag.LevelChange;
+                                            //Add comma in file
+                                            nextObject.NextLevelPath = values[2].ToString();
                                             break;
 
                                         default:
