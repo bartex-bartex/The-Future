@@ -16,18 +16,21 @@ namespace The_Future
 
         public Map(string path, ContentManager contentManager, Player player)
         {
-            try 
+            try
             {
                 Parser.LoadLevel(this, path);
 
-                Atlas = contentManager.Load<Texture2D>(path);
+                Atlas = contentManager.Load<Texture2D>(TexturePath);
 
                 Vector2 playerSpawn = MapAttributes.PlayerSpawn;
-                MapAttributes.PlayerTransitionFromLevel.TryGetValue(MapAttributes.PreviousMapName, out playerSpawn);
+                if(MapAttributes.PlayerTransitionFromLevel.ContainsKey(MapAttributes.PreviousMapName))
+                {
+                    playerSpawn = MapAttributes.PlayerTransitionFromLevel[MapAttributes.PreviousMapName];
+                }
 
                 player.SetPosition(playerSpawn);
             }
-            catch { }
+             catch { }
         }
 
         public void DrawLevel(SpriteBatch spriteBatch, Player player)

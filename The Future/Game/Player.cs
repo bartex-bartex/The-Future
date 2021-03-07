@@ -12,15 +12,20 @@ namespace The_Future
     {
         public Texture2D playerTexture;
 
-        private Vector2 position;
-        public Vector2 Position { get { return velocity; } private set { velocity = value; } }
-        private Vector2 velocity;
-        public Vector2 Velocity { get { return velocity; } private set { velocity = value; } }
+        public Vector2 Position;
+        public Vector2 Velocity;
+        public Rectangle PlayerAreaCenter
+        {
+            get
+            {
+                return new Rectangle((int)Position.X - playerTexture.Width/2, (int)Position.Y - playerTexture.Height/2, playerTexture.Width, playerTexture.Height);
+            }
+        }
         float speed = 5.0f;
 
         public Player(ContentManager content)
         {
-            playerTexture = content.Load<Texture2D>("sprite");
+            playerTexture = content.Load<Texture2D>("player");
         }
 
         /// <summary>
@@ -33,44 +38,97 @@ namespace The_Future
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(playerTexture, position, null, Color.White, 0, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), 1, SpriteEffects.None, 1);
+            spriteBatch.Draw(playerTexture, Position, null, Color.White, 0, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), 1, SpriteEffects.None, 1);
         }
 
         public void UpdatePosition()
         {
-            //UpdateVelocity();
+            Position += Velocity;
 
-            position += velocity;
+            CheckMapBoundaries();
 
-            velocity = new Vector2(0, 0);
+            Velocity = new Vector2(0, 0);
         }
 
         public void UpdateVelocity()
         {
             if(KeyboardManager.IsKeyPressed(Keys.Left))
             {
-                velocity.X -= speed;
+                Velocity.X -= speed;
             }
 
             if(KeyboardManager.IsKeyPressed(Keys.Right))
             {
-                velocity.X += speed;
+                Velocity.X += speed;
             }
 
             if(KeyboardManager.IsKeyPressed(Keys.Up))
             {
-                velocity.Y -= speed;
+                Velocity.Y -= speed;
             }
 
             if(KeyboardManager.IsKeyPressed(Keys.Down))
             {
-                velocity.Y += speed;
+                Velocity.Y += speed;
             }
         }
 
-        //public void UpdateAnimation()
-        //{
+        public bool IsTouchingLeft(Rectangle objectRectangle)
+        {
+            return PlayerAreaCenter.Right + Velocity.X > objectRectangle.Left &&
+              PlayerAreaCenter.Left < objectRectangle.Left &&
+              PlayerAreaCenter.Bottom > objectRectangle.Top &&
+              PlayerAreaCenter.Top < objectRectangle.Bottom;
+        }
 
-        //}
+        public bool IsTouchingRight(Rectangle objectRectangle)
+        {
+            return PlayerAreaCenter.Left + Velocity.X < objectRectangle.Right &&
+              PlayerAreaCenter.Right > objectRectangle.Right &&
+              PlayerAreaCenter.Bottom > objectRectangle.Top &&
+              PlayerAreaCenter.Top < objectRectangle.Bottom;
+        }
+
+        public bool IsTouchingTop(Rectangle objectRectangle)
+        {
+            return PlayerAreaCenter.Bottom + Velocity.Y > objectRectangle.Top &&
+              PlayerAreaCenter.Top < objectRectangle.Top &&
+              PlayerAreaCenter.Right > objectRectangle.Left &&
+              PlayerAreaCenter.Left < objectRectangle.Right;
+        }
+
+        public bool IsTouchingBottom(Rectangle objectRectangle)
+        {
+            return PlayerAreaCenter.Top + Velocity.Y < objectRectangle.Bottom &&
+              PlayerAreaCenter.Bottom > objectRectangle.Bottom &&
+              PlayerAreaCenter.Right > objectRectangle.Left &&
+              PlayerAreaCenter.Left < objectRectangle.Right;
+        }
+
+        public void ResolveStaticCollision(MapObject mapObject)
+        {
+            if ((Velocity.X > 0 && IsTouchingLeft(mapObject.Area)) ||
+            (Velocity.X < 0 && IsTouchingRight(mapObject.Area)))
+                Velocity.X = 0;
+
+            if ((Velocity.Y > 0 && IsTouchingTop(mapObject.Area)) ||
+                (Velocity.Y < 0 && IsTouchingBottom(mapObject.Area)))
+                Velocity.Y = 0;
+        }
+
+        public void CheckMapBoundaries()
+        {
+            if (Position.X > GameMain.screenWidth)
+                Position.X = GameMain.screenWidth;
+
+            if (Position.X < 0)
+                Position.X = 0;
+
+            if (Position.Y > GameMain.screenHeight)
+                Position.Y = GameMain.screenHeight;
+
+            if (Position.Y < 0)
+                Position.Y = 0;
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace The_Future
                                 new Vector2
                                 (
                                     float.Parse(values[2]),
-                                    float.Parse(values[4])
+                                    float.Parse(values[3])
                                 )
                             );
 
@@ -125,7 +125,7 @@ namespace The_Future
                                     ) ;
                                  break;
 
-                                case "COLLSION_COMPONENT":
+                                case "COLLISION_COMPONENT":
                                     //nextObject.AddCollisionAttribute(string.Equals(values[1], "STATIC"));
                                     CollisionFlag collisionFlag;
 

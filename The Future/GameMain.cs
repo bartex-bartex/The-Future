@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.IO;
 
 namespace The_Future
 {
@@ -30,7 +32,8 @@ namespace The_Future
             Window.Title = "The Future: Time Escaper";
 
             player = new Player(Content);
-            map = new Map("no path yet", Content, player);
+            map = new Map(@"../../../Content/map1.txt", Content, player);
+            var path = Directory.GetCurrentDirectory();
 
             base.Initialize();
         }
@@ -51,6 +54,7 @@ namespace The_Future
             
             player.UpdateVelocity();
             HandlePlayerCollision();
+            player.UpdatePosition();
 
             base.Update(gameTime);
         }
@@ -71,48 +75,24 @@ namespace The_Future
 
         public void HandlePlayerCollision()
         {
-            Vector2 currentVelocity = player.Velocity;
-            Vector2 currentPosition = player.Position;
-            Vector2 futurePosition = player.Position + currentVelocity;
-            int playerWidth = player.playerTexture.Width;
-            int playerHeight = player.playerTexture.Height;
-
             foreach (MapObject Object in map.MapObjects)
             {
                 if (Object.IsCollidable == true)
                 {
-                    if (Object.Area.Intersects(new Rectangle((int)futurePosition.X, (int)futurePosition.Y,
-                        playerWidth, playerHeight)) == true)
+                    if (RectangleHelper.IsCollision(player.PlayerAreaCenter, Object.Area) == true)
                     {
-                        if(Object.CollisionFlag == CollisionFlag.Static)
+                        if (Object.IsCollisionResponseStatic == true)
                         {
-                            //AABB resolve
-                            if(currentPosition.X + playerWidth < Object.Area.X)
-                            {
-                                futurePosition = new Vector2(Object.Area.X - playerWidth, futurePosition.Y);
-                            }
-                            else if (currentPosition.X > Object.Area.X + Object.Area.Width)
-                            {
-                                futurePosition = new Vector2(Object.Area.X + Object.Area.Width, futurePosition.Y);
-                            }
-                            else if (currentPosition.Y + playerHeight < Object.Area.Y)
-                            {
-                                futurePosition = new Vector2(futurePosition.X, Object.Area.Y - playerHeight);
-                            }
-                            else if (currentPosition.Y > Object.Area.Y + Object.Area.Height)
-                            {
-                                futurePosition = new Vector2(futurePosition.X, Object.Area.Y + Object.Area.Height);
-                            }
+                            player.ResolveStaticCollision(Object);
                         }
 
-                        else if(Object.CollisionFlag == CollisionFlag.LevelChange)
+                        else if (Object.IsLevelChange == true)
                         {
                             map = new Map(Object.NextLevelPath, Content, player);
                         }
                     }
                 }
             }
-            player.SetPosition(futurePosition);
         }
     }
 }

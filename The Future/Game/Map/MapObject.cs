@@ -26,7 +26,6 @@ namespace The_Future
         public bool IsRenderable { get; set; }
         public RenderFlag RenderFlag { get; set; }
         public bool IsCollidable { get; set; }
-        public CollisionFlag CollisionFlag { get; set; }
         public bool IsCollisionResponseStatic { get; set; }
         public bool IsLevelChange { get; set; }
         public string NextLevelPath { get; set; }
