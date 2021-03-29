@@ -14,11 +14,11 @@ namespace The_Future
 
         public Vector2 Position;
         public Vector2 Velocity;
-        public Rectangle PlayerAreaCenter
+        public Rectangle PlayerArea
         {
             get
             {
-                return new Rectangle((int)Position.X - playerTexture.Width/2, (int)Position.Y - playerTexture.Height/2, playerTexture.Width, playerTexture.Height);
+                return new Rectangle((int)Position.X, (int)Position.Y, playerTexture.Width, playerTexture.Height);
             }
         }
         float speed = 5.0f;
@@ -26,10 +26,11 @@ namespace The_Future
         public Player(ContentManager content)
         {
             playerTexture = content.Load<Texture2D>("player");
+            Position += new Vector2(playerTexture.Width, playerTexture.Height);
         }
 
         /// <summary>
-        /// If player goes to next map
+        /// Useful when player goes to the next map
         /// </summary>
         public void SetPosition(Vector2 position)
         {
@@ -38,14 +39,15 @@ namespace The_Future
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(playerTexture, Position, null, Color.White, 0, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), 1, SpriteEffects.None, 1);
+            //spriteBatch.Draw(playerTexture, Position, null, Color.White, 0, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), 1, SpriteEffects.None, 1);
+            spriteBatch.Draw(playerTexture, Position, Color.White);
         }
 
         public void UpdatePosition()
         {
             Position += Velocity;
 
-            CheckMapBoundaries();
+            //CheckMapBoundaries();
 
             Velocity = new Vector2(0, 0);
         }
@@ -75,34 +77,34 @@ namespace The_Future
 
         public bool IsTouchingLeft(Rectangle objectRectangle)
         {
-            return PlayerAreaCenter.Right + Velocity.X > objectRectangle.Left &&
-              PlayerAreaCenter.Left < objectRectangle.Left &&
-              PlayerAreaCenter.Bottom > objectRectangle.Top &&
-              PlayerAreaCenter.Top < objectRectangle.Bottom;
+            return PlayerArea.Right + Velocity.X > objectRectangle.Left &&
+              PlayerArea.Left + Velocity.X < objectRectangle.Left &&
+              PlayerArea.Bottom > objectRectangle.Top &&
+              PlayerArea.Top < objectRectangle.Bottom;
         }
 
         public bool IsTouchingRight(Rectangle objectRectangle)
         {
-            return PlayerAreaCenter.Left + Velocity.X < objectRectangle.Right &&
-              PlayerAreaCenter.Right > objectRectangle.Right &&
-              PlayerAreaCenter.Bottom > objectRectangle.Top &&
-              PlayerAreaCenter.Top < objectRectangle.Bottom;
+            return PlayerArea.Left + Velocity.X < objectRectangle.Right &&
+              PlayerArea.Right + Velocity.X > objectRectangle.Right &&
+              PlayerArea.Bottom > objectRectangle.Top &&
+              PlayerArea.Top < objectRectangle.Bottom;
         }
 
         public bool IsTouchingTop(Rectangle objectRectangle)
         {
-            return PlayerAreaCenter.Bottom + Velocity.Y > objectRectangle.Top &&
-              PlayerAreaCenter.Top < objectRectangle.Top &&
-              PlayerAreaCenter.Right > objectRectangle.Left &&
-              PlayerAreaCenter.Left < objectRectangle.Right;
+            return PlayerArea.Bottom + Velocity.Y > objectRectangle.Top &&
+              PlayerArea.Top + Velocity.X < objectRectangle.Top &&
+              PlayerArea.Right > objectRectangle.Left &&
+              PlayerArea.Left < objectRectangle.Right;
         }
 
         public bool IsTouchingBottom(Rectangle objectRectangle)
         {
-            return PlayerAreaCenter.Top + Velocity.Y < objectRectangle.Bottom &&
-              PlayerAreaCenter.Bottom > objectRectangle.Bottom &&
-              PlayerAreaCenter.Right > objectRectangle.Left &&
-              PlayerAreaCenter.Left < objectRectangle.Right;
+            return PlayerArea.Top + Velocity.Y < objectRectangle.Bottom &&
+              PlayerArea.Bottom + Velocity.X > objectRectangle.Bottom &&
+              PlayerArea.Right > objectRectangle.Left &&
+              PlayerArea.Left < objectRectangle.Right;
         }
 
         public void ResolveStaticCollision(MapObject mapObject)
@@ -116,19 +118,19 @@ namespace The_Future
                 Velocity.Y = 0;
         }
 
-        public void CheckMapBoundaries()
-        {
-            if (Position.X > GameMain.screenWidth)
-                Position.X = GameMain.screenWidth;
+        //public void CheckMapBoundaries()
+        //{
+        //    if (Position.X > GameMain.screenWidth)
+        //        Position.X = GameMain.screenWidth;
 
-            if (Position.X < 0)
-                Position.X = 0;
+        //    if (Position.X < 0)
+        //        Position.X = 0;
 
-            if (Position.Y > GameMain.screenHeight)
-                Position.Y = GameMain.screenHeight;
+        //    if (Position.Y > GameMain.screenHeight)
+        //        Position.Y = GameMain.screenHeight;
 
-            if (Position.Y < 0)
-                Position.Y = 0;
-        }
+        //    if (Position.Y < 0)
+        //        Position.Y = 0;
+        //}
     }
 }

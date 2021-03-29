@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.IO;
 
 namespace The_Future
 {
@@ -11,6 +9,9 @@ namespace The_Future
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private DialogBox dialogBox;
+        public SpriteFont DialogFont { get; private set; }
+        public Vector2 ScreenCenter => new Vector2(screenWidth / 2, screenHeight / 2);
 
         public static int screenHeight;
         public static int screenWidth;
@@ -33,7 +34,7 @@ namespace The_Future
 
             player = new Player(Content);
             map = new Map(@"../../../Content/map1.txt", Content, player);
-            var path = Directory.GetCurrentDirectory();
+
 
             base.Initialize();
         }
@@ -41,8 +42,11 @@ namespace The_Future
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            DialogFont = Content.Load<SpriteFont>("Font_Arial");
+            dialogBox = new DialogBox();
+            //dialogBox.Initialize("Byly sobie kotki dwa ale to juz bylo i nie wroci wiecej i choc tyle sie zdazylo to juz nigdy fa;wknuejujujujujujujujujujujujujujujujujujujujuvuuuuuuuuuuuuuuuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvuvucuuuuuuuuulouuuuuuuuuiuuuuuuuuuuuuuuuuujuuuuuuuuuuuuuuuujujujujujuuuuuuuuuuuuuuuuuujjjjjjjjjjjjjjjjjjjjjbrhfvllllllllllllllllllllllllllllllllll dfsaaaa sdfa ds asd asd fas afs asf sda fasd fasd fasd fasd fasf sad asd asdf asd fasd asd ftak nie stanie sie");
 
-            // TODO: use this.Content to load your game content here
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -56,6 +60,8 @@ namespace The_Future
             HandlePlayerCollision();
             player.UpdatePosition();
 
+            dialogBox.Update();
+
             base.Update(gameTime);
         }
 
@@ -67,6 +73,7 @@ namespace The_Future
 
             map.DrawLevel(spriteBatch, player);
             player.Draw(spriteBatch);
+            dialogBox.Draw(spriteBatch);
 
             spriteBatch.End();
 
@@ -79,7 +86,7 @@ namespace The_Future
             {
                 if (Object.IsCollidable == true)
                 {
-                    if (RectangleHelper.IsCollision(player.PlayerAreaCenter, Object.Area) == true)
+                    if (RectangleHelper.IsCollision(player.PlayerArea, Object.Area) == true)
                     {
                         if (Object.IsCollisionResponseStatic == true)
                         {
