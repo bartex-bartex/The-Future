@@ -10,6 +10,7 @@ namespace The_Future
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private DialogBox dialogBox;
+        public SpriteFont CharacterNameFont { get; private set; }
         public SpriteFont DialogFont { get; private set; }
         public Vector2 ScreenCenter => new Vector2(screenWidth / 2, screenHeight / 2);
 
@@ -42,7 +43,7 @@ namespace The_Future
 
             graphics.ApplyChanges();
 
-            scale = screenHeight / desiredHeight;
+            scale = (float)screenHeight / (float)desiredHeight;
 
             Matrix scaleMatrix;
             Matrix translateMatrix;
@@ -50,14 +51,14 @@ namespace The_Future
             // w pełni zapełnionym wymiarem będzie ten, który jest najmniejszy
             if (screenWidth > screenHeight)
             {
-                float scale = screenHeight / desiredHeight;
+                float scale = (float)screenHeight / (float)desiredHeight;
                 scaleMatrix = Matrix.CreateScale(scale, scale, 1.0f);
                 float translation = (screenWidth - (desiredWidth * scale)) / 2.0f;
                 translateMatrix = Matrix.CreateTranslation(translation, 0.0f, 0.0f);
             }
             else
             {
-                float scale = screenWidth / desiredWidth;
+                float scale = (float)screenWidth / (float)desiredWidth;
                 scaleMatrix = Matrix.CreateScale(scale, scale, 1.0f);
                 float translation = (screenHeight - (desiredHeight * scale)) / 2.0f;
                 translateMatrix = Matrix.CreateTranslation(0.0f, translation, 0.0f);
@@ -65,6 +66,8 @@ namespace The_Future
 
             // najpierw zeskalować, potem przenieść
             globalSpriteBatchMatrix = Matrix.Multiply(scaleMatrix, translateMatrix);
+
+            //tutaj
 
             Window.Title = "The Future: Time Escaper";
 
@@ -78,9 +81,9 @@ namespace The_Future
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            DialogFont = Content.Load<SpriteFont>("Font_Arial");
+            DialogFont = Content.Load<SpriteFont>("Font_Serif12");
             dialogBox = new DialogBox();
-            dialogBox.Initialize(@"Całkowicie poglądowy *# dialog box. przez narodowe komitety olimpijskie, dlatego tez al di  fijnveari rgrs srdgs grgr sgrs grxgrdx grdxgrdxgdrx grdxgdrx gdxrxc fv gf nfd hgtrjhdg fhdfggj fdghb gfdjdfghbn vdfbgfd jdfgnbvdnyd hd rsgdgrd.");
+            //dialogBox.Initialize(@"Całkowicie poglądowy *# dialog box. przez narodowe komitety olimpijskie, dlatego tez al di  fijnveari rgrs srdgs grgr sgrs grxgrdx grdxgrdxgdrx grdxgdrx gdxrxc fv gf nfd hgtrjhdg fhdfggj fdghb gfdjdfghbn vdfbgfd jdfgnbvdnyd hd rsgdgrd.");
 
 
         }
@@ -137,11 +140,17 @@ namespace The_Future
 
                         else if (Object.IsDialogActive == true)
                         {
-                            DialogManager.DisplayDialog(Object.DialogPath);
+                            DialogManager.DisplayDialog(Object.DialogPath, dialogBox);
+                            Object.IsDialogActive = false;
                         }
                     }
                 }
             }
+        }
+
+        private void ChooseFonts()
+        {
+            //if(scale > 1.7f)
         }
     }
 }

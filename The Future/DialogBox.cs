@@ -10,18 +10,17 @@ namespace The_Future
 {
     public class DialogBox
     {
-        public string Text { get; set; }      
         public float TextScale { get; set; }
         public bool IsActive { get; private set; }
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public int BorderWidth { get; set; }
-        public string CharacterName { get; set; }
         public Vector2 CharacterNamePosition { get; set; }
-        public Color CharacterNameColor { get; set; }
 
-        private List<string> pages;
+        List<PlayerSentence> playerSentences;
+        int currentPlayerSentence;
         private int currentPage;
+
         private Texture2D borderTexture;
         private Color borderColor;
         private Texture2D fillTexture;
@@ -50,9 +49,7 @@ namespace The_Future
 
         public DialogBox()
         {
-            if (GameMain.scale > 1.35f)
-                TextScale = 1.35f;
-            else { TextScale = GameMain.scale; }
+            TextScale = GameMain.scale;
 
             characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("w", 1)) * TextScale;
 
@@ -68,8 +65,9 @@ namespace The_Future
             borderTexture = new Texture2D(Program.Game.GraphicsDevice, 1, 1);
             borderTexture.SetData(new[] { borderColor });
 
-            pages = new List<string>();
+            playerSentences = new List<PlayerSentence>();
             currentPage = 0;
+            currentPlayerSentence = 0;
 
             var sizeX = (int)(GameMain.screenWidth * 0.5);
             var sizeY = (int)(GameMain.screenHeight * 0.2);
@@ -77,31 +75,61 @@ namespace The_Future
             Size = new Vector2(sizeX, sizeY);
 
             var posX = GameMain.screenWidth/2 - (Size.X / 2);
-            var posY = GameMain.screenHeight - Size.Y - 30;
+            var posY = GameMain.screenHeight - Size.Y - 40;
 
             Position = new Vector2(posX, posY);
 
-            CharacterNamePosition = new Vector2(Position.X + Size.X * 0.1f, Position.Y - characterSize.Y - 2);
+            CharacterNamePosition = new Vector2(Position.X, Position.Y - characterSize.Y * 2 - 2);
         }
 
-        public void Initialize(string text)
+        public void Initialize(string[] dialogs)
         {
-            Text = text;
+            string[] sentences;
+
+            for (int i = 0; i < dialogs.Length; i++)
+            {
+                sentences = dialogs[i].Split('&');
+                PlayerSentence playerSentence = new PlayerSentence();
+
+                playerSentence.characterName = sentences[0];
+
+                switch (sentences[0])
+                {
+                    case "You":
+                        playerSentence.color = Color.Blue;
+                        break;
+
+                    case "???":
+                        playerSentence.color = Color.Red;
+                        break;
+
+                    case "King":
+                        playerSentence.color = Color.Red;
+                        break;
+
+                    default:
+                        playerSentence.color = Color.White;
+                        break;
+                }
+
+                playerSentence.pages = WrapText(sentences[1]);
+
+                playerSentences.Add(playerSentence);
+            }
+
             currentPage = 0;
+            currentPlayerSentence = 0;
             Show();
         }
 
         public void Show()
         {
             IsActive = true;
-
-            pages = WrapText(Text);
         }
 
         public void Hide()
         {
-            IsActive = false;
-            
+            IsActive = false;      
         }
 
         public void Update()
@@ -110,13 +138,21 @@ namespace The_Future
             {
                 if (KeyboardManager.IsKeyPressed(Keys.Enter) && !KeyboardManager.IsPreviousKeyPressed(Keys.Enter))
                 {
-                    if (currentPage >= pages.Count - 1)
+                    if (currentPage < playerSentences[currentPlayerSentence].pages.Count - 1)
                     {
-                        Hide();
+                        currentPage++;
                     }
                     else
                     {
-                        currentPage++;
+                        if (currentPlayerSentence < playerSentences.Count - 1)
+                        {
+                            currentPlayerSentence++;
+                            currentPage = 0;
+                        }
+                        else
+                        {
+                            Hide();
+                        }
                     }
                 }
             }
@@ -135,7 +171,11 @@ namespace The_Future
                     textSpriteBatch.Draw(borderTexture, side, borderColor);
                 }
                 textSpriteBatch.Draw(fillTexture, TextRectangle, fillColor);
-                textSpriteBatch.DrawString(Program.Game.DialogFont, pages[currentPage], TextPosition, dialogColor, 0, new Vector2(0,0), TextScale, SpriteEffects.None, 0);
+                textSpriteBatch.DrawString(Program.Game.DialogFont, playerSentences[currentPlayerSentence].pages[currentPage], TextPosition, 
+                    dialogColor, 0, new Vector2(0,0), TextScale, SpriteEffects.None, 0);
+
+                textSpriteBatch.DrawString(Program.Game.DialogFont, playerSentences[currentPlayerSentence].characterName, CharacterNamePosition,
+                    playerSentences[currentPlayerSentence].color, 0, Vector2.Zero, 2* TextScale, SpriteEffects.None, 0);
 
                 textSpriteBatch.End();
                 //Blinking

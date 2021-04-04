@@ -25,12 +25,19 @@
 /processorParam:TextureFormat=Color
 /build:AtlasA.png
 
-#begin Font_Arial.spritefont
+#begin Font_Serif12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Font_Arial.spritefont
+/build:Font_Serif12.spritefont
+
+#begin Font_Serif20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font_Serif20.spritefont
 
 #begin player.png
 /importer:TextureImporter
