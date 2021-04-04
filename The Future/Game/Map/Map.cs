@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace The_Future
@@ -63,6 +64,8 @@ namespace The_Future
                 for (int y = 0; y < yCount; y++)
                 {
                     Vector2 position = new Vector2(area.X + x * spriteInAtlas.Width, area.Y + y * spriteInAtlas.Height);
+
+                    //Debug.WriteLine(position.ToString());
 
                     spriteBatch.Draw(Atlas, new Rectangle((int)position.X, (int)position.Y, spriteInAtlas.Width, spriteInAtlas.Height),
                         spriteInAtlas, Color.White);

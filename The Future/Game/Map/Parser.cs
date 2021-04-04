@@ -33,8 +33,9 @@ namespace The_Future
                 do
                 {
                     currentLine = sr.ReadLine();
+                    currentLine = Regex.Replace(currentLine, @"[ ]*\(.+\)[ ]*", "");
 
-                    if(currentLine.StartsWith('#'))
+                    if (currentLine.StartsWith('#'))
                     {
                         tokens = currentLine.Substring(1).Split(':');
                         switch(tokens[0])
@@ -126,7 +127,6 @@ namespace The_Future
                                  break;
 
                                 case "COLLISION_COMPONENT":
-                                    //nextObject.AddCollisionAttribute(string.Equals(values[1], "STATIC"));
                                     CollisionFlag collisionFlag;
 
                                     switch(values[1])
@@ -137,8 +137,13 @@ namespace The_Future
 
                                         case "LEVEL_CHANGE":
                                             collisionFlag = CollisionFlag.LevelChange;
-                                            //Add comma in file
                                             nextObject.NextLevelPath = values[2].ToString();
+                                            break;
+
+                                        case "DIALOG":
+                                            collisionFlag = CollisionFlag.Dialog;
+                                            nextObject.DialogPath = values[2].ToString();
+                                            nextObject.IsDialogActive = true;
                                             break;
 
                                         default:
@@ -149,6 +154,11 @@ namespace The_Future
                                     nextObject.AddCollisionAttribute(collisionFlag);
 
                                     break;
+                            }
+
+                            if (currentLine.EndsWith('#'))
+                            {
+
                             }
                         }
 
@@ -171,6 +181,11 @@ namespace The_Future
                 sr.Close();
             }
             return map;
+        }
+
+        private static string RemoveCommentaries(string levelText)
+        {
+            return Regex.Replace(levelText, "(.+)", "");
         }
     }
 }

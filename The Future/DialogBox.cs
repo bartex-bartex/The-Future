@@ -10,11 +10,15 @@ namespace The_Future
 {
     public class DialogBox
     {
-        public string Text { get; set; }
+        public string Text { get; set; }      
+        public float TextScale { get; set; }
         public bool IsActive { get; private set; }
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public int BorderWidth { get; set; }
+        public string CharacterName { get; set; }
+        public Vector2 CharacterNamePosition { get; set; }
+        public Color CharacterNameColor { get; set; }
 
         private List<string> pages;
         private int currentPage;
@@ -23,7 +27,7 @@ namespace The_Future
         private Texture2D fillTexture;
         private Color fillColor;
         private Color dialogColor;
-        private Vector2 characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("W", 1));
+        private Vector2 characterSize;
         private const float DialogBoxMargin = 24f;
         private int MaxCharsPerLine() => (int) Math.Floor((Size.X - DialogBoxMargin) / characterSize.X);
         private int MaxLinesCount() => (int) Math.Floor((Size.Y - DialogBoxMargin) / characterSize.Y) - 1;
@@ -46,6 +50,12 @@ namespace The_Future
 
         public DialogBox()
         {
+            if (GameMain.scale > 1.35f)
+                TextScale = 1.35f;
+            else { TextScale = GameMain.scale; }
+
+            characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("w", 1)) * TextScale;
+
             BorderWidth = 2;
             dialogColor = Color.Black;
 
@@ -61,17 +71,17 @@ namespace The_Future
             pages = new List<string>();
             currentPage = 0;
 
-            //Analyze Size and Position setting
-            var sizeX = (int)(Program.Game.GraphicsDevice.Viewport.Width * 0.5);
-            var sizeY = (int)(Program.Game.GraphicsDevice.Viewport.Height * 0.2);
+            var sizeX = (int)(GameMain.screenWidth * 0.5);
+            var sizeY = (int)(GameMain.screenHeight * 0.2);
 
             Size = new Vector2(sizeX, sizeY);
 
-            var posX = Program.Game.ScreenCenter.X - (Size.X / 2f);
-            var posY = Program.Game.GraphicsDevice.Viewport.Height - Size.Y - 30;
+            var posX = GameMain.screenWidth/2 - (Size.X / 2);
+            var posY = GameMain.screenHeight - Size.Y - 30;
 
             Position = new Vector2(posX, posY);
 
+            CharacterNamePosition = new Vector2(Position.X + Size.X * 0.1f, Position.Y - characterSize.Y - 2);
         }
 
         public void Initialize(string text)
@@ -112,19 +122,22 @@ namespace The_Future
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(GraphicsDevice graphicsDevice)
         {
-            if(IsActive == true)
+            if (IsActive == true)
             {
+                SpriteBatch textSpriteBatch = new SpriteBatch(graphicsDevice);
+
+                textSpriteBatch.Begin();
+
                 foreach (Rectangle side in BorderRectangles)
                 {
-                    spriteBatch.Draw(borderTexture, side, borderColor);
+                    textSpriteBatch.Draw(borderTexture, side, borderColor);
                 }
+                textSpriteBatch.Draw(fillTexture, TextRectangle, fillColor);
+                textSpriteBatch.DrawString(Program.Game.DialogFont, pages[currentPage], TextPosition, dialogColor, 0, new Vector2(0,0), TextScale, SpriteEffects.None, 0);
 
-                spriteBatch.Draw(fillTexture, TextRectangle, fillColor);
-
-                spriteBatch.DrawString(Program.Game.DialogFont, pages[currentPage], TextPosition, dialogColor);
-
+                textSpriteBatch.End();
                 //Blinking
             }
         }

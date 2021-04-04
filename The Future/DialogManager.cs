@@ -4,8 +4,11 @@ using System.Text;
 
 namespace The_Future
 {
-    public class DialogManager
+    public static class DialogManager
     {
+        public static void DisplayDialog(string path)
+        {
 
+        }
     }
 }

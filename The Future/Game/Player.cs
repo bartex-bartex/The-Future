@@ -25,7 +25,7 @@ namespace The_Future
 
         public Player(ContentManager content)
         {
-            playerTexture = content.Load<Texture2D>("player");
+            playerTexture = content.Load<Texture2D>("Player1");
             Position += new Vector2(playerTexture.Width, playerTexture.Height);
         }
 
@@ -94,7 +94,7 @@ namespace The_Future
         public bool IsTouchingTop(Rectangle objectRectangle)
         {
             return PlayerArea.Bottom + Velocity.Y > objectRectangle.Top &&
-              PlayerArea.Top + Velocity.X < objectRectangle.Top &&
+              PlayerArea.Top + Velocity.Y < objectRectangle.Top &&
               PlayerArea.Right > objectRectangle.Left &&
               PlayerArea.Left < objectRectangle.Right;
         }
@@ -102,7 +102,7 @@ namespace The_Future
         public bool IsTouchingBottom(Rectangle objectRectangle)
         {
             return PlayerArea.Top + Velocity.Y < objectRectangle.Bottom &&
-              PlayerArea.Bottom + Velocity.X > objectRectangle.Bottom &&
+              PlayerArea.Bottom + Velocity.Y > objectRectangle.Bottom &&
               PlayerArea.Right > objectRectangle.Left &&
               PlayerArea.Left < objectRectangle.Right;
         }

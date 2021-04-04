@@ -16,7 +16,8 @@ namespace The_Future
     {
         None,
         Static,
-        LevelChange
+        LevelChange,
+        Dialog
     }
 
     public class MapObject
@@ -29,7 +30,8 @@ namespace The_Future
         public bool IsCollisionResponseStatic { get; set; }
         public bool IsLevelChange { get; set; }
         public string NextLevelPath { get; set; }
-        //public bool IsCollectable { get; set; }
+        public string DialogPath { get; set; }
+        public bool IsDialogActive { get; set; }
 
         public MapObject(Vector2 position, Vector2 dimension)
         {

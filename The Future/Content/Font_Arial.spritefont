@@ -11,7 +11,7 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>Arial</FontName>
+    <FontName>Microsoft Sans Serif</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
@@ -51,6 +51,10 @@ with.
     See the documentation for more information.
     -->
     <CharacterRegions>
+      <CharacterRegion>
+        <Start>&#260;</Start>
+        <End>&#499;</End>
+      </CharacterRegion>
       <CharacterRegion>
         <Start>&#32;</Start>
         <End>&#126;</End>
