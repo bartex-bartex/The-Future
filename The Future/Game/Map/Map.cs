@@ -47,7 +47,7 @@ namespace The_Future
                             break;
 
                         case RenderFlag.Stretch:
-                            spriteBatch.Draw(Atlas, Object.Area, Object.SpriteAreaInAtlas, Color.White);
+                            spriteBatch.Draw(Atlas, Object.Area, Object.SpriteAreaInAtlas, Color.White, Object.Rotation, Vector2.Zero, SpriteEffects.None, 0);
                             break;
                     }
                 }

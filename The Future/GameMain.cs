@@ -25,6 +25,8 @@ namespace The_Future
         Map map;
         public Matrix globalSpriteBatchMatrix;
 
+        public static bool IsPlayerMovementBlock = false;
+
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -48,7 +50,6 @@ namespace The_Future
             Matrix scaleMatrix;
             Matrix translateMatrix;
 
-            // w pełni zapełnionym wymiarem będzie ten, który jest najmniejszy
             if (screenWidth > screenHeight)
             {
                 float scale = (float)screenHeight / (float)desiredHeight;
@@ -64,10 +65,7 @@ namespace The_Future
                 translateMatrix = Matrix.CreateTranslation(0.0f, translation, 0.0f);
             }
 
-            // najpierw zeskalować, potem przenieść
             globalSpriteBatchMatrix = Matrix.Multiply(scaleMatrix, translateMatrix);
-
-            //tutaj
 
             Window.Title = "The Future: Time Escaper";
 
@@ -83,9 +81,6 @@ namespace The_Future
             spriteBatch = new SpriteBatch(GraphicsDevice);
             DialogFont = Content.Load<SpriteFont>("Font_Serif12");
             dialogBox = new DialogBox();
-            //dialogBox.Initialize(@"Całkowicie poglądowy *# dialog box. przez narodowe komitety olimpijskie, dlatego tez al di  fijnveari rgrs srdgs grgr sgrs grxgrdx grdxgrdxgdrx grdxgdrx gdxrxc fv gf nfd hgtrjhdg fhdfggj fdghb gfdjdfghbn vdfbgfd jdfgnbvdnyd hd rsgdgrd.");
-
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -95,9 +90,13 @@ namespace The_Future
 
             KeyboardManager.Update();
             
-            player.UpdateVelocity();
+            if(IsPlayerMovementBlock == false)
+                player.UpdateVelocity();
+
             HandlePlayerCollision();
-            player.UpdatePosition();
+
+            if(IsPlayerMovementBlock == false)
+                player.UpdatePosition();
 
             dialogBox.Update();
 
@@ -126,6 +125,14 @@ namespace The_Future
             {
                 if (Object.IsCollidable == true)
                 {
+                    if (Object.ObjectType == EObjectType.Door && GameProgress.Doors[Object.ObjectNumber] == EDoor.Open)
+                    {
+                        Object.Rotation = 1.5f;
+                        Object.IsCollidable = false;
+                        Object.IsCollisionResponseStatic = false;
+                        // Open/close teleport
+                    }
+
                     if (RectangleHelper.IsCollision(player.PlayerArea, Object.Area) == true)
                     {
                         if (Object.IsCollisionResponseStatic == true)
@@ -133,24 +140,21 @@ namespace The_Future
                             player.ResolveStaticCollision(Object);
                         }
 
-                        else if (Object.IsLevelChange == true)
+                        else if (Object.ObjectType == EObjectType.Teleport && GameProgress.AreTeleportsActive[Object.ObjectNumber] == true)
                         {
                             map = new Map(Object.NextLevelPath, Content, player);
                         }
 
-                        else if (Object.IsDialogActive == true)
+                        else if (GameProgress.AreDialogsActive[Object.ObjectNumber] == true)
                         {
                             DialogManager.DisplayDialog(Object.DialogPath, dialogBox);
-                            Object.IsDialogActive = false;
+                            GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
                         }
+
+
                     }
                 }
             }
-        }
-
-        private void ChooseFonts()
-        {
-            //if(scale > 1.7f)
         }
     }
 }

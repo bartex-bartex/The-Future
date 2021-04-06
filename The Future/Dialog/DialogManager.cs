@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace The_Future
 {
@@ -13,7 +14,17 @@ namespace The_Future
             StreamReader sr = new StreamReader(path);
             string[] dialogs = sr.ReadToEnd().Split('\n');
 
-            dialogBox.Initialize(dialogs);
+            bool IsSucced = int.TryParse(Regex.Match(path, "[0-9]+").Value, out int dialogNumber);
+
+            if (IsSucced == true)
+            {
+                dialogBox.Initialize(dialogs, dialogNumber);
+            }
+            else
+            {
+                dialogBox.Initialize(dialogs);
+            }
+
         }
     }
 }

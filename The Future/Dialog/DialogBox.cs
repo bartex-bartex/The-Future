@@ -20,6 +20,7 @@ namespace The_Future
         List<PlayerSentence> playerSentences;
         int currentPlayerSentence;
         private int currentPage;
+        private int dialogNumber = -1;
 
         private Texture2D borderTexture;
         private Color borderColor;
@@ -49,9 +50,9 @@ namespace The_Future
 
         public DialogBox()
         {
-            TextScale = GameMain.scale;
+            TextScale = GameMain.scale / 2;
 
-            characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("w", 1)) * TextScale;
+            characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("u", 1)) * TextScale;
 
             BorderWidth = 2;
             dialogColor = Color.Black;
@@ -68,6 +69,7 @@ namespace The_Future
             playerSentences = new List<PlayerSentence>();
             currentPage = 0;
             currentPlayerSentence = 0;
+            dialogNumber = 0;
 
             var sizeX = (int)(GameMain.screenWidth * 0.5);
             var sizeY = (int)(GameMain.screenHeight * 0.2);
@@ -122,14 +124,63 @@ namespace The_Future
             Show();
         }
 
+        public void Initialize(string[] dialogs, int dialogNumber)
+        {
+            string[] sentences;
+
+            for (int i = 0; i < dialogs.Length; i++)
+            {
+                sentences = dialogs[i].Split('&');
+                PlayerSentence playerSentence = new PlayerSentence();
+
+                playerSentence.characterName = sentences[0];
+
+                switch (sentences[0])
+                {
+                    case "You":
+                        playerSentence.color = Color.Blue;
+                        break;
+
+                    case "???":
+                        playerSentence.color = Color.Red;
+                        break;
+
+                    case "King":
+                        playerSentence.color = Color.Red;
+                        break;
+
+                    default:
+                        playerSentence.color = Color.White;
+                        break;
+                }
+
+                playerSentence.pages = WrapText(sentences[1]);
+
+                playerSentences.Add(playerSentence);
+            }
+
+            currentPage = 0;
+            currentPlayerSentence = 0;
+            this.dialogNumber = dialogNumber;
+            Show();
+        }
+
         public void Show()
         {
             IsActive = true;
+            GameMain.IsPlayerMovementBlock = true;
         }
 
         public void Hide()
         {
-            IsActive = false;      
+            IsActive = false;
+            GameMain.IsPlayerMovementBlock = false;
+
+            if(dialogNumber > 0)
+            {
+                GameProgress.SetDialogsValue(dialogNumber);
+            }
+            
         }
 
         public void Update()

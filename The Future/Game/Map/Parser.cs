@@ -19,6 +19,7 @@ namespace The_Future
             string currentLine;
             string[] tokens;
             string[] values;
+            int number;
             List<MapObject> mapObjects = new List<MapObject>();
             MapObject nextObject;
             MapAttributes mapAttributes = new MapAttributes();
@@ -38,7 +39,7 @@ namespace The_Future
                     if (currentLine.StartsWith('#'))
                     {
                         tokens = currentLine.Substring(1).Split(':');
-                        switch(tokens[0])
+                        switch (tokens[0])
                         {
                             case "PLAYER_SUMMON":
                                 values = tokens[1].Split(',');
@@ -68,7 +69,7 @@ namespace The_Future
                     else
                     {
                         tokens = currentLine.Split('&');
-                        values = tokens[0].Split(',');
+                        values = tokens[1].Split(',');
 
                         nextObject = new MapObject
                             (
@@ -84,16 +85,34 @@ namespace The_Future
                                 )
                             );
 
-                        for (int i = 1; i < tokens.Length; i++)
+                        switch (tokens[0])
+                        {
+                            case "DOOR":
+                                nextObject.ObjectType = EObjectType.Door;
+                                break;
+
+                            case "DIALOG":
+                                nextObject.ObjectType = EObjectType.Dialog;
+                                break;
+
+                            case "TELEPORT":
+                                nextObject.ObjectType = EObjectType.Teleport;
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        for (int i = 2; i < tokens.Length; i++)
                         {
                             values = tokens[i].Split(',');
 
-                            switch(values[0])
+                            switch (values[0])
                             {
                                 case "RENDER_COMPONENT":
                                     RenderFlag renderFlag;
 
-                                    switch(values[5])
+                                    switch (values[5])
                                     {
                                         case "REPEAT":
                                             renderFlag = RenderFlag.Repeat;
@@ -123,27 +142,40 @@ namespace The_Future
                                         ),
 
                                         renderFlag
-                                    ) ;
-                                 break;
+                                    );
+                                    break;
 
                                 case "COLLISION_COMPONENT":
                                     CollisionFlag collisionFlag;
 
-                                    switch(values[1])
+                                    switch (values[1])
                                     {
                                         case "STATIC":
                                             collisionFlag = CollisionFlag.Static;
+                                            if (nextObject.ObjectType == EObjectType.Door)
+                                            {
+                                                number = int.Parse(values[2]); 
+                                                nextObject.ObjectNumber = number;
+
+                                                if (values.Length > 3)
+                                                {
+                                                    number = int.Parse(values[3]);
+                                                    nextObject.DoorConnectedToTeleport = number;
+                                                }
+                                            }
                                             break;
 
                                         case "LEVEL_CHANGE":
                                             collisionFlag = CollisionFlag.LevelChange;
                                             nextObject.NextLevelPath = values[2].ToString();
+                                            number = int.Parse(values[3]);
+                                            nextObject.ObjectNumber = number;
+                                            
                                             break;
 
                                         case "DIALOG":
                                             collisionFlag = CollisionFlag.Dialog;
                                             nextObject.DialogPath = values[2].ToString();
-                                            nextObject.IsDialogActive = true;
                                             break;
 
                                         default:
@@ -152,18 +184,13 @@ namespace The_Future
                                     }
 
                                     nextObject.AddCollisionAttribute(collisionFlag);
-
+                                    nextObject.SetRotation();
                                     break;
-                            }
-
-                            if (currentLine.EndsWith('#'))
-                            {
-
                             }
                         }
 
                         mapObjects.Add(nextObject);
-                    }      
+                    }
 
                 } while (sr.Peek() >= 0);
 
@@ -174,18 +201,13 @@ namespace The_Future
             }
             catch
             {
-                
+
             }
             finally
             {
                 sr.Close();
             }
             return map;
-        }
-
-        private static string RemoveCommentaries(string levelText)
-        {
-            return Regex.Replace(levelText, "(.+)", "");
         }
     }
 }

@@ -20,18 +20,33 @@ namespace The_Future
         Dialog
     }
 
+    public enum EObjectType
+    {
+        NotSpecial,
+        Door,
+        Dialog,
+        Teleport
+    }
+
     public class MapObject
     {
         public Rectangle Area { get; set; }
         public Rectangle SpriteAreaInAtlas { get; set; }
         public bool IsRenderable { get; set; }
         public RenderFlag RenderFlag { get; set; }
-        public bool IsCollidable { get; set; }
-        public bool IsCollisionResponseStatic { get; set; }
-        public bool IsLevelChange { get; set; }
+        public bool IsCollidable { get; set; } = false;
+        public bool IsCollisionResponseStatic { get; set; } = false;
+        //public bool IsLevelChange { get; set; }
+        //public bool IsLevelChangeActive { get; set; }
         public string NextLevelPath { get; set; }
         public string DialogPath { get; set; }
-        public bool IsDialogActive { get; set; }
+        //public bool IsDialogActive { get; set; } --> Wypisane w GameProgess
+        //public bool IsDoor { get; set; }
+        //public EDoor Door { get; set; }
+        public float Rotation { get; set; } = 0;
+        public EObjectType ObjectType { get; set; }
+        public int ObjectNumber { get; set; }
+        public int DoorConnectedToTeleport { get; set; } = -1;
 
         public MapObject(Vector2 position, Vector2 dimension)
         {
@@ -57,8 +72,16 @@ namespace The_Future
                     break;
 
                 case CollisionFlag.LevelChange:
-                    IsLevelChange = true;
+
                     break;
+            }
+        }
+
+        public void SetRotation()
+        {
+            if(ObjectType == EObjectType.Door && GameProgress.Doors[ObjectNumber] == EDoor.Open)
+            {
+                Rotation = 1.5f;
             }
         }
     }
