@@ -16,12 +16,16 @@ namespace The_Future
         public static bool[] AreDialogsActive { get; set; }
         public static EDoor[] Doors { get; set; }
         public static bool[] AreTeleportsActive { get; set; }
+        public static string[] TerminalCodes { get; set; }
+        public static bool[] AreTerminalActive { get; set; }
 
         static GameProgress()
         {
             AreDialogsActive = new bool[5];
             Doors = new EDoor[5];
             AreTeleportsActive = new bool[5];
+            TerminalCodes = new string[5];
+            AreTerminalActive = new bool[5];
 
             AreDialogsActive.Select(x => x = true);
             Doors.Select(x => x = EDoor.Close);
@@ -30,6 +34,9 @@ namespace The_Future
             for (int i = 0; i < AreDialogsActive.Length; i++) { AreDialogsActive[i] = true; }
             for (int i = 0; i < Doors.Length; i++) { Doors[i] = EDoor.Close; }
             for (int i = 0; i < AreTeleportsActive.Length; i++) { AreTeleportsActive[i] = false; }
+            for (int i = 0; i < AreTerminalActive.Length; i++) { AreTerminalActive[i] = true; }
+
+            TerminalCodes[0] = "1234";
 
         }
 
@@ -51,7 +58,23 @@ namespace The_Future
                 case 2:
                     AreDialogsActive[dialogNumber - 1] = false;
                     Doors[1] = EDoor.Open;
-                    AreTeleportsActive[0] = true; //Should be set automaticaly with door
+                    AreTeleportsActive[0] = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public static void SetTerminalValues(int terminalNumber)
+        {
+            switch (terminalNumber)
+            {
+                case 0:
+                    Doors[2] = EDoor.Open;
+                    AreTeleportsActive[1] = true;
+                    AreTerminalActive[terminalNumber] = false;
+                    GameMain.IsPlayerMovementBlock = false;
                     break;
 
                 default:

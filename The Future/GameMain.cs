@@ -27,6 +27,9 @@ namespace The_Future
 
         public static bool IsPlayerMovementBlock = false;
 
+        private bool IsInTerminalArea;
+        private Terminal terminal;
+
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -85,8 +88,8 @@ namespace The_Future
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
             KeyboardManager.Update();
             
@@ -111,7 +114,19 @@ namespace The_Future
 
             map.DrawLevel(spriteBatch, player);
             player.Draw(spriteBatch);
-
+            if (terminal != null && IsInTerminalArea == true)
+            {
+                if (terminal.IsActive == true)
+                {
+                    terminal.DrawTerminal(spriteBatch, Content);
+                    terminal.EnterCode();
+                    terminal.WriteActualCode(spriteBatch, dialogBox.TextScale);
+                }
+                else if (terminal.IsActive == false)
+                {
+                    terminal.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
+                }
+            }
             spriteBatch.End();
 
             dialogBox.Draw(GraphicsDevice);
@@ -121,6 +136,8 @@ namespace The_Future
 
         public void HandlePlayerCollision()
         {
+            IsInTerminalArea = false;
+
             foreach (MapObject Object in map.MapObjects)
             {
                 if (Object.IsCollidable == true)
@@ -151,7 +168,22 @@ namespace The_Future
                             GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
                         }
 
+                        else if (Object.ObjectType == EObjectType.Terminal && GameProgress.AreTerminalActive[Object.ObjectNumber] == true)
+                        {
+                            terminal = (Terminal)Object.Instance;                
+                            IsInTerminalArea = true;
 
+                            if (KeyboardManager.IsKeyPressed(Keys.Space))
+                            {
+                                terminal.IsActive = true;
+                                IsPlayerMovementBlock = true; //can cause problems
+                            }
+                            else if (KeyboardManager.IsKeyPressed(Keys.Escape))
+                            {
+                                terminal.IsActive = false;
+                                IsPlayerMovementBlock = false;
+                            }
+                        }
                     }
                 }
             }

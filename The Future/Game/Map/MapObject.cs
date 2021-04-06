@@ -18,7 +18,9 @@ namespace The_Future
         None,
         Static,
         LevelChange,
-        Dialog
+        Dialog,
+        Terminal,
+        Exercise
     }
 
     public enum EObjectType
@@ -26,7 +28,9 @@ namespace The_Future
         NotSpecial,
         Door,
         Dialog,
-        Teleport
+        Teleport,
+        Exercise,
+        Terminal
     }
 
     public class MapObject
@@ -37,17 +41,13 @@ namespace The_Future
         public RenderFlag RenderFlag { get; set; }
         public bool IsCollidable { get; set; } = false;
         public bool IsCollisionResponseStatic { get; set; } = false;
-        //public bool IsLevelChange { get; set; }
-        //public bool IsLevelChangeActive { get; set; }
         public string NextLevelPath { get; set; }
         public string DialogPath { get; set; }
-        //public bool IsDialogActive { get; set; } --> Wypisane w GameProgess
-        //public bool IsDoor { get; set; }
-        //public EDoor Door { get; set; }
         public float Rotation { get; set; } = 0;
         public EObjectType ObjectType { get; set; }
         public int ObjectNumber { get; set; }
         public int DoorConnectedToTeleport { get; set; } = -1;
+        public object Instance { get; set; } //add IsActive in GameProgress
 
         public MapObject(Vector2 position, Vector2 dimension)
         {
@@ -78,6 +78,10 @@ namespace The_Future
 
                 case CollisionFlag.Dialog:
                     ObjectNumber = int.Parse(Regex.Match(DialogPath, "[0-9]+").Value);
+                    break;
+
+                case CollisionFlag.Terminal:
+                    Instance = new Terminal(ObjectNumber);
                     break;
             }
         }

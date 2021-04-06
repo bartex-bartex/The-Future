@@ -52,6 +52,8 @@ namespace The_Future
         {
             TextScale = GameMain.scale / 2;
 
+            //fillColor = new Color(248, 214, 142);
+
             characterSize = Program.Game.DialogFont.MeasureString(new StringBuilder("u", 1)) * TextScale;
 
             BorderWidth = 2;

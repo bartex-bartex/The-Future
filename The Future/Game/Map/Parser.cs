@@ -99,6 +99,14 @@ namespace The_Future
                                 nextObject.ObjectType = EObjectType.Teleport;
                                 break;
 
+                            case "TERMINAL":
+                                nextObject.ObjectType = EObjectType.Terminal;
+                                break;
+
+                            case "EXERCISE":
+                                nextObject.ObjectType = EObjectType.Exercise;
+                                break;
+
                             default:
                                 break;
                         }
@@ -176,6 +184,16 @@ namespace The_Future
                                         case "DIALOG":
                                             collisionFlag = CollisionFlag.Dialog;
                                             nextObject.DialogPath = values[2].ToString();
+                                            break;
+
+                                        case "TERMINAL":
+                                            collisionFlag = CollisionFlag.Terminal;
+                                            nextObject.ObjectType = EObjectType.Terminal;
+                                            nextObject.ObjectNumber = int.Parse(values[2]);
+                                            break;
+
+                                        case "EXERCISE":
+                                            collisionFlag = CollisionFlag.Exercise;
                                             break;
 
                                         default:
