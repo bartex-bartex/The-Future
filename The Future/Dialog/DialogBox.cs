@@ -178,9 +178,15 @@ namespace The_Future
 
             if(dialogNumber > 0)
             {
+                
                 GameProgress.SetDialogsValue(dialogNumber);
             }
-            
+
+            playerSentences = new List<PlayerSentence>();
+            currentPage = 0;
+            currentPlayerSentence = 0;
+            dialogNumber = 0;
+
         }
 
         public void Update()

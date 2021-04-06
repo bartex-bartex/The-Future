@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace The_Future
 {
@@ -72,7 +73,11 @@ namespace The_Future
                     break;
 
                 case CollisionFlag.LevelChange:
+                    
+                    break;
 
+                case CollisionFlag.Dialog:
+                    ObjectNumber = int.Parse(Regex.Match(DialogPath, "[0-9]+").Value);
                     break;
             }
         }

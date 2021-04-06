@@ -9,15 +9,14 @@ namespace The_Future
 {
     public static class DialogManager
     {
-        public static void DisplayDialog(string path, DialogBox dialogBox)
+        public static void DisplayDialog(string path, DialogBox dialogBox, int dialogNumber)
         {
             StreamReader sr = new StreamReader(path);
             string[] dialogs = sr.ReadToEnd().Split('\n');
 
-            bool IsSucced = int.TryParse(Regex.Match(path, "[0-9]+").Value, out int dialogNumber);
-
-            if (IsSucced == true)
-            {
+            
+            if(dialogNumber > 0)
+            { 
                 dialogBox.Initialize(dialogs, dialogNumber);
             }
             else

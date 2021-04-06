@@ -147,7 +147,7 @@ namespace The_Future
 
                         else if (GameProgress.AreDialogsActive[Object.ObjectNumber] == true)
                         {
-                            DialogManager.DisplayDialog(Object.DialogPath, dialogBox);
+                            DialogManager.DisplayDialog(Object.DialogPath, dialogBox, Object.ObjectNumber);
                             GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
                         }
 

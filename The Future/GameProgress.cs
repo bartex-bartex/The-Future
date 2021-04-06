@@ -40,11 +40,18 @@ namespace The_Future
 
         public static void SetDialogsValue(int dialogNumber)
         {
+            
             switch (dialogNumber)
             {
                 case 1:
                     AreDialogsActive[dialogNumber - 1] = false;
                     Doors[0] = EDoor.Open;
+                    break;
+
+                case 2:
+                    AreDialogsActive[dialogNumber - 1] = false;
+                    Doors[1] = EDoor.Open;
+                    AreTeleportsActive[0] = true; //Should be set automaticaly with door
                     break;
 
                 default:
