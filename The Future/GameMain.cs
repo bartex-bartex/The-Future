@@ -29,6 +29,8 @@ namespace The_Future
 
         private bool IsInTerminalArea;
         private Terminal terminal;
+        private bool IsInExerciseArea;
+        private Exercise exercise;
 
         public GameMain()
         {
@@ -73,7 +75,7 @@ namespace The_Future
             Window.Title = "The Future: Time Escaper";
 
             player = new Player(Content);
-            map = new Map(@"../../../Content/map1.txt", Content, player);
+            map = new Map(@"../../../Content/Maps/map1.txt", Content, player);
 
             base.Initialize();
 
@@ -127,6 +129,18 @@ namespace The_Future
                     terminal.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
                 }
             }
+
+            if(exercise != null & IsInExerciseArea == true)
+            {
+                if(exercise.IsActive == true)
+                {
+                    exercise.DrawExercise(spriteBatch, Content);
+                }
+                else if (exercise.IsActive == false)
+                {
+                    exercise.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
+                }
+            }
             spriteBatch.End();
 
             dialogBox.Draw(GraphicsDevice);
@@ -137,6 +151,7 @@ namespace The_Future
         public void HandlePlayerCollision()
         {
             IsInTerminalArea = false;
+            IsInExerciseArea = false;
 
             foreach (MapObject Object in map.MapObjects)
             {
@@ -144,7 +159,7 @@ namespace The_Future
                 {
                     if (Object.ObjectType == EObjectType.Door && GameProgress.Doors[Object.ObjectNumber] == EDoor.Open)
                     {
-                        Object.Rotation = 1.5f;
+                        Object.SetRotation();
                         Object.IsCollidable = false;
                         Object.IsCollisionResponseStatic = false;
                         // Open/close teleport
@@ -162,8 +177,9 @@ namespace The_Future
                             map = new Map(Object.NextLevelPath, Content, player);
                         }
 
-                        else if (GameProgress.AreDialogsActive[Object.ObjectNumber] == true)
+                        else if (GameProgress.AreDialogsActive[Object.ObjectNumber] == true && Object.ObjectType == EObjectType.Dialog)
                         {
+                            
                             DialogManager.DisplayDialog(Object.DialogPath, dialogBox, Object.ObjectNumber);
                             GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
                         }
@@ -181,6 +197,23 @@ namespace The_Future
                             else if (KeyboardManager.IsKeyPressed(Keys.Escape))
                             {
                                 terminal.IsActive = false;
+                                IsPlayerMovementBlock = false;
+                            }
+                        }
+
+                        else if (Object.ObjectType == EObjectType.Exercise)
+                        {
+                            exercise = (Exercise)Object.Instance;
+                            IsInExerciseArea = true;
+
+                            if (KeyboardManager.IsKeyPressed(Keys.Space))
+                            {
+                                exercise.IsActive = true;
+                                IsPlayerMovementBlock = true; //can cause problems
+                            }
+                            else if (KeyboardManager.IsKeyPressed(Keys.Escape))
+                            {
+                                exercise.IsActive = false;
                                 IsPlayerMovementBlock = false;
                             }
                         }

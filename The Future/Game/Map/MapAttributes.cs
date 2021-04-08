@@ -7,7 +7,7 @@ namespace The_Future
 {
     public class MapAttributes
     {
-        public string PreviousMapName;
+        public string PreviousMapName { get; set; }
         public Vector2 PlayerSpawn { get; set; }
         public Dictionary<string, Vector2> PlayerTransitionFromLevel = new Dictionary<string, Vector2>();
 

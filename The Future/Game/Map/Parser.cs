@@ -25,7 +25,7 @@ namespace The_Future
             MapAttributes mapAttributes = new MapAttributes();
 
             mapAttributes.PreviousMapName = currentLevelName;
-            currentLevelName = Path.GetFileName(path);
+            currentLevelName = path;
 
             try
             {
@@ -164,11 +164,12 @@ namespace The_Future
                                             {
                                                 number = int.Parse(values[2]); 
                                                 nextObject.ObjectNumber = number;
-
-                                                if (values.Length > 3)
+                                                if(values.Length > 3)
                                                 {
-                                                    number = int.Parse(values[3]);
-                                                    nextObject.DoorConnectedToTeleport = number;
+                                                    if(values[3] == "-")
+                                                    {
+                                                        nextObject.IsNegative = true;
+                                                    }
                                                 }
                                             }
                                             break;
@@ -188,12 +189,12 @@ namespace The_Future
 
                                         case "TERMINAL":
                                             collisionFlag = CollisionFlag.Terminal;
-                                            nextObject.ObjectType = EObjectType.Terminal;
                                             nextObject.ObjectNumber = int.Parse(values[2]);
                                             break;
 
                                         case "EXERCISE":
                                             collisionFlag = CollisionFlag.Exercise;
+                                            nextObject.ObjectNumber = int.Parse(values[2]);
                                             break;
 
                                         default:

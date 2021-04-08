@@ -46,8 +46,9 @@ namespace The_Future
         public float Rotation { get; set; } = 0;
         public EObjectType ObjectType { get; set; }
         public int ObjectNumber { get; set; }
-        public int DoorConnectedToTeleport { get; set; } = -1;
+        //public int DoorConnectedToTeleport { get; set; } = -1;
         public object Instance { get; set; } //add IsActive in GameProgress
+        public bool IsNegative { get; set; }
 
         public MapObject(Vector2 position, Vector2 dimension)
         {
@@ -83,6 +84,10 @@ namespace The_Future
                 case CollisionFlag.Terminal:
                     Instance = new Terminal(ObjectNumber);
                     break;
+
+                case CollisionFlag.Exercise:
+                    Instance = new Exercise(ObjectNumber);
+                    break;
             }
         }
 
@@ -90,7 +95,10 @@ namespace The_Future
         {
             if(ObjectType == EObjectType.Door && GameProgress.Doors[ObjectNumber] == EDoor.Open)
             {
-                Rotation = 1.5f;
+                if (IsNegative == true)
+                    Rotation = -1.5f;
+                else
+                    Rotation = 1.5f;
             }
         }
     }
