@@ -29,7 +29,7 @@ namespace The_Future
             {
                 exerciseTexture = content.Load<Texture2D>(GameProgress.PathsToExercises[exerciseNumber]);
             }
-            spriteBatch.Draw(exerciseTexture, new Rectangle(20, 20, 760, 440), Color.White);
+            spriteBatch.Draw(exerciseTexture, new Rectangle(60, 60, 680, 360), Color.White);
         }
 
         public void WriteSpaceMessage(SpriteBatch spriteBatch, float scale) //scale after calculation

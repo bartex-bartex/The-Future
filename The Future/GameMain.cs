@@ -32,6 +32,9 @@ namespace The_Future
         private bool IsInExerciseArea;
         private Exercise exercise;
 
+        private bool IsHelloPlayerActive;
+        Texture2D introduce;
+
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -42,6 +45,8 @@ namespace The_Future
 
         protected override void Initialize()
         {
+            Window.Title = "The Future: Time Escaper";
+
             screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
@@ -72,10 +77,10 @@ namespace The_Future
 
             globalSpriteBatchMatrix = Matrix.Multiply(scaleMatrix, translateMatrix);
 
-            Window.Title = "The Future: Time Escaper";
-
             player = new Player(Content);
             map = new Map(@"../../../Content/Maps/map1.txt", Content, player);
+
+            IsHelloPlayerActive = true;
 
             base.Initialize();
 
@@ -84,8 +89,10 @@ namespace The_Future
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            DialogFont = Content.Load<SpriteFont>("Font_Serif12");
+            DialogFont = Content.Load<SpriteFont>("Font_Serif26");
             dialogBox = new DialogBox();
+
+            introduce = Content.Load<Texture2D>("HelloPlayer");
         }
 
         protected override void Update(GameTime gameTime)
@@ -94,16 +101,21 @@ namespace The_Future
             //    Exit();
 
             KeyboardManager.Update();
-            
-            if(IsPlayerMovementBlock == false)
-                player.UpdateVelocity();
 
-            HandlePlayerCollision();
+            if (IsHelloPlayerActive == false)
+            {
 
-            if(IsPlayerMovementBlock == false)
-                player.UpdatePosition();
+                if (IsPlayerMovementBlock == false)
+                    player.UpdateVelocity();
 
-            dialogBox.Update();
+                HandlePlayerCollision();
+
+                if (IsPlayerMovementBlock == false)
+                    player.UpdatePosition();
+
+                dialogBox.Update();
+            }
+
 
             base.Update(gameTime);
         }
@@ -112,39 +124,54 @@ namespace The_Future
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, globalSpriteBatchMatrix);
-
-            map.DrawLevel(spriteBatch, player);
-            player.Draw(spriteBatch);
-            if (terminal != null && IsInTerminalArea == true)
+            if (IsHelloPlayerActive == true)
             {
-                if (terminal.IsActive == true)
+                SpriteBatch helloSprite = new SpriteBatch(GraphicsDevice);
+                helloSprite.Begin();
+                helloSprite.Draw(introduce, new Rectangle(0, 0, screenWidth, screenHeight), Color.White);
+                if (KeyboardManager.IsKeyPressed(Keys.Enter))
                 {
-                    terminal.DrawTerminal(spriteBatch, Content);
-                    terminal.EnterCode();
-                    terminal.WriteActualCode(spriteBatch, dialogBox.TextScale);
+                    IsHelloPlayerActive = false;
                 }
-                else if (terminal.IsActive == false)
-                {
-                    terminal.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
-                }
+                helloSprite.End();
             }
-
-            if(exercise != null & IsInExerciseArea == true)
+            else
             {
-                if(exercise.IsActive == true)
+
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, globalSpriteBatchMatrix);
+
+                map.DrawLevel(spriteBatch, player);
+                player.Draw(spriteBatch);
+                if (terminal != null && IsInTerminalArea == true)
                 {
-                    exercise.DrawExercise(spriteBatch, Content);
+                    if (terminal.IsActive == true)
+                    {
+                        terminal.DrawTerminal(spriteBatch, Content);
+                        terminal.EnterCode();
+                        terminal.WriteActualCode(spriteBatch, dialogBox.TextScale);
+                    }
+                    else if (terminal.IsActive == false)
+                    {
+                        terminal.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
+                    }
                 }
-                else if (exercise.IsActive == false)
+
+                if (exercise != null & IsInExerciseArea == true)
                 {
-                    exercise.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
+                    if (exercise.IsActive == true)
+                    {
+                        exercise.DrawExercise(spriteBatch, Content);
+                    }
+                    else if (exercise.IsActive == false)
+                    {
+                        exercise.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
+                    }
                 }
+                spriteBatch.End();
+
+                dialogBox.Draw(GraphicsDevice);
+
             }
-            spriteBatch.End();
-
-            dialogBox.Draw(GraphicsDevice);
-
             base.Draw(gameTime);
         }
 

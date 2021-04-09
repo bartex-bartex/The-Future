@@ -29,7 +29,7 @@ namespace The_Future
                     playerSpawn = MapAttributes.PlayerTransitionFromLevel[MapAttributes.PreviousMapName];
                 }
 
-                player.SetPosition(playerSpawn);
+                 player.SetPosition(playerSpawn);
             }
              catch { }
         }

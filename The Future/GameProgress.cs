@@ -42,9 +42,9 @@ namespace The_Future
             //PathsToExercises[1] = "AtlasA";
 
             PathsToExercises[0] = "1";
-            PathsToExercises[1] = "Exercises/2";
-            PathsToExercises[2] = "Exercises/3";
-            PathsToExercises[3] = "Exercises/4";
+            PathsToExercises[1] = "2";
+            PathsToExercises[2] = "3";
+            PathsToExercises[3] = "4";
         }
 
         //public static void SetDoorsValue()
