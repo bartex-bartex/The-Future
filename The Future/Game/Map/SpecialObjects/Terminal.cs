@@ -44,7 +44,7 @@ namespace The_Future
                 YterminalScale = (float)440 / (float)terminalTexture.Height;
 
                 //Can be rendered with not the best positioning
-                CodeText = new Vector2((175 * XterminalScale + 20) + (GameMain.screenWidth - GameMain.desiredWidth * GameMain.scale) / 2,
+                CodeText = new Vector2((150 * XterminalScale + 20) + (GameMain.screenWidth - GameMain.desiredWidth * GameMain.scale) / 2,
                     (175 * YterminalScale + 20));
             }
         }
