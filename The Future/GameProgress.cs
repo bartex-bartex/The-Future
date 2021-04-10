@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
 
 namespace The_Future
 {
@@ -19,6 +20,8 @@ namespace The_Future
         public static string[] TerminalCodes { get; set; }
         public static bool[] AreTerminalActive { get; set; }
         public static string[] PathsToExercises { get; set; }
+
+        public static Stopwatch stopWatch;
 
         static GameProgress()
         {
@@ -38,7 +41,7 @@ namespace The_Future
             for (int i = 0; i < AreTeleportsActive.Length; i++) { AreTeleportsActive[i] = false; }
             for (int i = 0; i < AreTerminalActive.Length; i++) { AreTerminalActive[i] = true; }
 
-            TerminalCodes[0] = "1234";
+            TerminalCodes[0] = "1638";
             //PathsToExercises[1] = "AtlasA";
 
             PathsToExercises[0] = "1";
@@ -46,11 +49,6 @@ namespace The_Future
             PathsToExercises[2] = "3";
             PathsToExercises[3] = "4";
         }
-
-        //public static void SetDoorsValue()
-        //{
-
-        //}
 
         public static void SetDialogsValue(int dialogNumber)
         {
@@ -68,6 +66,17 @@ namespace The_Future
                     AreTeleportsActive[0] = true;
                     AreTeleportsActive[1] = true;
                     Doors[2] = EDoor.Open;
+                    break;
+
+                case 3:
+                    AreDialogsActive[dialogNumber - 1] = false;
+                    break;
+
+                case 4:
+                    AreDialogsActive[dialogNumber - 1] = false;
+                    GameMain.IsGameEnd = true;
+                    stopWatch = new Stopwatch();
+                    stopWatch.Start();
                     break;
 
                 default:

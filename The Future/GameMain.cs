@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
+using System.Timers;
 
 namespace The_Future
 {
@@ -32,13 +34,16 @@ namespace The_Future
         private bool IsInExerciseArea;
         private Exercise exercise;
 
-        private bool IsHelloPlayerActive;
+        public static bool IsHelloPlayerActive;
+        public static bool IsGameEnd;
         Texture2D introduce;
+        Texture2D gameEndScreen;
+        int currentEndScreen = 1;
 
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -97,12 +102,10 @@ namespace The_Future
 
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            //    Exit();
 
             KeyboardManager.Update();
 
-            if (IsHelloPlayerActive == false)
+            if (IsHelloPlayerActive == false && IsGameEnd == false)
             {
 
                 if (IsPlayerMovementBlock == false)
@@ -135,6 +138,33 @@ namespace The_Future
                 }
                 helloSprite.End();
             }
+
+            else if (IsGameEnd == true)
+            {
+                SpriteBatch endSprite = new SpriteBatch(GraphicsDevice);
+                endSprite.Begin();
+                if (currentEndScreen == 1)
+                {
+                    gameEndScreen = Content.Load<Texture2D>("GameEnd1");
+                    endSprite.Draw(gameEndScreen, new Rectangle(0, 0, screenWidth, screenHeight), Color.White);
+
+                    if(GameProgress.stopWatch.Elapsed.TotalSeconds > 2)
+                    {
+                        currentEndScreen = 2;
+                        GameProgress.stopWatch.Stop();
+                    }
+                }
+                else if(currentEndScreen == 2)
+                {
+                    gameEndScreen = Content.Load<Texture2D>("GameEnd2");
+                    endSprite.Draw(gameEndScreen, new Rectangle(0, 0, screenWidth, screenHeight), Color.White);
+
+                    if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        Exit();
+                }
+                endSprite.End();
+            }
+
             else
             {
 
@@ -172,6 +202,7 @@ namespace The_Future
                 dialogBox.Draw(GraphicsDevice);
 
             }
+
             base.Draw(gameTime);
         }
 

@@ -1,9 +1,22 @@
 ﻿???&Wreszcie się ocknąłeś... Spałeś bardzo długo...
-You&AAUUU, gdzie ja jestem?
-???&Jedni nazywają to miejsce "rajem", a drudzy "przekleństwem".
+You&AUUU, gdzie ja jestem?
+???&Jedni nazywają to miejsce "rajem", a drudzy - "przekleństwem".
 You&Nic nie rozumiem... Od czego to zależy?
-???&Zależy to od wyniku ich próby...
-You&(Ach, ciekawie się zaczyna...) Może powinienem najpierw zapytać kim jesteś? Jestem tym kim ty byś mnie nazwał szczęśniku...
-???&Dowiesz się w swoim czasie, na razie możesz do mnie mówić {...}.
-You&Dobrze {...}, ale ciągle nie wiem co ja tu robię...
-{...}&Pamiętasz swoje ostatnie wspomnienie?
+???&Zależy to od wyniku ich próby.
+You&(Ach, ciekawie się zaczyna...) Może powinienem najpierw zapytać kim jesteś?
+???&Dowiesz się w swoim czasie, na razie możesz do mnie mówić "Niarb".
+You&Dobrze Niarb, ale ciągle nie wiem co ja tu robię...
+Niarb&Pamiętasz swoje ostatnie wspomnienie?
+You&...
+Niarb&Skończyliście tworzyć wehikuł czasu, jesteś szefem tego projektu. Jako pierwszy z ludzi zdecydowałeś się także spróbować podróży w czasie.
+You&Udało się przynajmniej?
+Niarb&I tak, i nie... 
+You&Ach, starczy tego, lepiej powiedz, jak mogę się stąd wydostać.
+Niarb&Widzę, że ciągle nie rozumiesz tego wszystkiego. Stąd nie da się wydostać, ale pozwól, że wytłumaczę... Próbowałeś podróży w czasie i jesteś teraz w miejscu poza czasem. W miejscu, gdzie wszystko się zaczęło. 
+You&Dalej nie rozumiem. Kim Ty jesteś? Gdzie ja jestem? Dlaczego ja tu jestem? Co to wszystko znaczy? Odpowiedz, proszę...
+Niarb&Odpowiem, jeżeli przejdziesz próbę.
+You&A jeżeli się jej nie podejmę?
+Niarb&Stracisz ostatnią szansę.
+You&Brzmi do prawdy przekonująco. Co muszę zrobić, aby przejść tę "próbę"?
+Niarb&Przed Tobą znajduje się pewna liczba pytań , które sprawdzą, czy jesteś godny powrócić. Na samym końcu dostaniesz to, czego najbardziej pragniesz i potrzebujesz.
+You&No, to do dzieła!

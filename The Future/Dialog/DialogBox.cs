@@ -107,7 +107,7 @@ namespace The_Future
                         playerSentence.color = Color.Red;
                         break;
 
-                    case "King":
+                    case "Niarb":
                         playerSentence.color = Color.Red;
                         break;
 
@@ -147,7 +147,7 @@ namespace The_Future
                         playerSentence.color = Color.Red;
                         break;
 
-                    case "King":
+                    case "Niarb":
                         playerSentence.color = Color.Red;
                         break;
 

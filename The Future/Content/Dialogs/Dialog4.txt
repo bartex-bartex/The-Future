@@ -1,0 +1,11 @@
+﻿Niarb&Brawo, zrobiłeś to. Wykazałeś się męstwem i odwagą. Teraz możesz powrócić...
+You&Dobrze. Ale najpierw chciałbym się dowiedzieć czegoś więcej o tym miejscu.
+Niarb&No cóż, dałem słowo... Zacznijmy od tego, że jako jeden z nielicznych przeszedłeś próbę. Udowodniłeś, że potrafisz myśleć naprawdę logicznie.
+Niarb&Zapewne zaskoczę Cię, gdy powiem, że ja jestem częścią Ciebie, tworem Twojej wyobraźni. Znajdujemy się wewnątrz Twojego umysłu. Twoja próba podróży w czasie nie zadziałała tak, jak powinna, i trafiłeś tutaj. Z każdym zadaniem, które rozwiązywałeś, było powiązane jakieś wspomnienie z Twojego życia. Projekty, ważne momenty. Musiałeś się z nimi zmierzyć, aby naprawić swoje popełnione błędy. Przypominasz sobie coś?
+You&Ach... było coś takiego.
+Niarb&Gdy wejdziesz do portalu, obudzisz się z powrotem w swoim świecie.
+You&Czekaj, ale dlaczego tak mało osób przechodzi próbę?
+Niarb&Mało kto lubi wracać i przyznawać się do swoich błędów. A to jest naprawdę duży problem, bo najwięcej uczymy się właśnie na własnych błędach. Zawsze trzeba je poprawiać, nigdy nie wolno popełnić tego samego błędu dwa razy.
+You&Całe życie bałem się błędów, strasznie mi głupio. Co powinienem zrobić, gdy wrócę, jak to naprawić?
+Niarb&Zrobisz, co będziesz uważał za słuszne. Pamiętaj, że to dopiero początek twojej prawdziwej przygody.
+You&I tego właśnie się obawiam.
