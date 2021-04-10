@@ -11,7 +11,6 @@ namespace The_Future
         {
             using (var game = new GameMain())
             {
-
                 Game = game;
                 game.Run();
             }

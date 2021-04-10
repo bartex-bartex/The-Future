@@ -22,10 +22,11 @@ namespace The_Future
         public static readonly int desiredWidth = 800;
         public static readonly int desiredHeight = 480;
 
-        public static float scale;
         Player player;
         Map map;
         public Matrix globalSpriteBatchMatrix;
+
+        public static float globalScale;
 
         public static bool IsPlayerMovementBlock = false;
 
@@ -38,7 +39,7 @@ namespace The_Future
         public static bool IsGameEnd;
         Texture2D introduce;
         Texture2D gameEndScreen;
-        int currentEndScreen = 1;
+        bool endScreenType = true;
 
         public GameMain()
         {
@@ -50,6 +51,8 @@ namespace The_Future
 
         protected override void Initialize()
         {
+            // generic setup
+
             Window.Title = "The Future: Time Escaper";
 
             screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -60,30 +63,36 @@ namespace The_Future
 
             graphics.ApplyChanges();
 
-            scale = (float)screenHeight / (float)desiredHeight;
+            // gui scale setup
 
-            Matrix scaleMatrix;
-            Matrix translateMatrix;
+            Matrix _scaleMatrix;
+            Matrix _translateMatrix;
+
+            // don't mess up scale when aspect ratio is x:y
 
             if (screenWidth > screenHeight)
             {
-                float scale = (float)screenHeight / (float)desiredHeight;
-                scaleMatrix = Matrix.CreateScale(scale, scale, 1.0f);
-                float translation = (screenWidth - (desiredWidth * scale)) / 2.0f;
-                translateMatrix = Matrix.CreateTranslation(translation, 0.0f, 0.0f);
+                globalScale = (float)screenHeight / (float)desiredHeight;
+                _scaleMatrix = Matrix.CreateScale(globalScale, globalScale, 1.0f);
+                float translation = (screenWidth - (desiredWidth * globalScale)) / 2.0f;
+                _translateMatrix = Matrix.CreateTranslation(translation, 0.0f, 0.0f);
             }
             else
             {
-                float scale = (float)screenWidth / (float)desiredWidth;
-                scaleMatrix = Matrix.CreateScale(scale, scale, 1.0f);
-                float translation = (screenHeight - (desiredHeight * scale)) / 2.0f;
-                translateMatrix = Matrix.CreateTranslation(0.0f, translation, 0.0f);
+                globalScale = (float)screenWidth / (float)desiredWidth;
+                _scaleMatrix = Matrix.CreateScale(globalScale, globalScale, 1.0f);
+                float translation = (screenHeight - (desiredHeight * globalScale)) / 2.0f;
+                _translateMatrix = Matrix.CreateTranslation(0.0f, translation, 0.0f);
             }
 
-            globalSpriteBatchMatrix = Matrix.Multiply(scaleMatrix, translateMatrix);
+            // finish up global sprite batch matrix
+
+            globalSpriteBatchMatrix = Matrix.Multiply(_scaleMatrix, _translateMatrix);
 
             player = new Player(Content);
             map = new Map(@"../../../Content/Maps/map1.txt", Content, player);
+
+            // initialize intro scene
 
             IsHelloPlayerActive = true;
 
@@ -105,15 +114,16 @@ namespace The_Future
 
             KeyboardManager.Update();
 
-            if (IsHelloPlayerActive == false && IsGameEnd == false)
+            // game is updated only if not in intro or outtro scene
+            if (!IsHelloPlayerActive && !IsGameEnd)
             {
 
-                if (IsPlayerMovementBlock == false)
+                if (!IsPlayerMovementBlock)
                     player.UpdateVelocity();
 
                 HandlePlayerCollision();
 
-                if (IsPlayerMovementBlock == false)
+                if (!IsPlayerMovementBlock)
                     player.UpdatePosition();
 
                 dialogBox.Update();
@@ -127,7 +137,9 @@ namespace The_Future
         {
             GraphicsDevice.Clear(Color.Black);
 
-            if (IsHelloPlayerActive == true)
+            // first time GUI + end screen
+
+            if (IsHelloPlayerActive)    // intro
             {
                 SpriteBatch helloSprite = new SpriteBatch(GraphicsDevice);
                 helloSprite.Begin();
@@ -139,60 +151,69 @@ namespace The_Future
                 helloSprite.End();
             }
 
-            else if (IsGameEnd == true)
+            else if (IsGameEnd) // outtro, has 2 modes
             {
                 SpriteBatch endSprite = new SpriteBatch(GraphicsDevice);
                 endSprite.Begin();
-                if (currentEndScreen == 1)
+                if (endScreenType)  // game end 1 screen
                 {
                     gameEndScreen = Content.Load<Texture2D>("GameEnd1");
                     endSprite.Draw(gameEndScreen, new Rectangle(0, 0, screenWidth, screenHeight), Color.White);
 
-                    if(GameProgress.stopWatch.Elapsed.TotalSeconds > 2)
+                    if (GameProgress.stopWatch.Elapsed.TotalSeconds > 2)
                     {
-                        currentEndScreen = 2;
+                        endScreenType = false;
                         GameProgress.stopWatch.Stop();
                     }
                 }
-                else if(currentEndScreen == 2)
+                else // game end 2 screen
                 {
                     gameEndScreen = Content.Load<Texture2D>("GameEnd2");
                     endSprite.Draw(gameEndScreen, new Rectangle(0, 0, screenWidth, screenHeight), Color.White);
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    if (Keyboard.GetState().IsKeyDown(Keys.Escape)) // end game
                         Exit();
                 }
                 endSprite.End();
             }
 
+            // else we can draw game
+
             else
             {
-
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, globalSpriteBatchMatrix);
+                /*
+                 *  Deferred - from back to front
+                 *  PointClamp - nearest neighbour scaling (preserves pixelation, gets rid of ugly white spaces)
+                 *  globalSpriteBatchMatrix - takes care of scaling and translation
+                 *  
+                 */
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, globalSpriteBatchMatrix);
 
                 map.DrawLevel(spriteBatch, player);
                 player.Draw(spriteBatch);
-                if (terminal != null && IsInTerminalArea == true)
+                // terminal handle code
+                if (IsInTerminalArea && terminal != null)
                 {
-                    if (terminal.IsActive == true)
+                    if (terminal.IsActive)
                     {
                         terminal.DrawTerminal(spriteBatch, Content);
                         terminal.EnterCode();
                         terminal.WriteActualCode(spriteBatch, dialogBox.TextScale);
                     }
-                    else if (terminal.IsActive == false)
+                    else
                     {
                         terminal.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
                     }
                 }
 
-                if (exercise != null & IsInExerciseArea == true)
+                // exercise handle code
+                if (IsInExerciseArea && exercise != null)
                 {
-                    if (exercise.IsActive == true)
+                    if (exercise.IsActive)
                     {
                         exercise.DrawExercise(spriteBatch, Content);
                     }
-                    else if (exercise.IsActive == false)
+                    else
                     {
                         exercise.WriteSpaceMessage(spriteBatch, dialogBox.TextScale);
                     }
@@ -211,6 +232,8 @@ namespace The_Future
             IsInTerminalArea = false;
             IsInExerciseArea = false;
 
+            // will get slow for 50+ objects, not necessary to fix
+
             foreach (MapObject Object in map.MapObjects)
             {
                 if (Object.IsCollidable == true)
@@ -223,56 +246,62 @@ namespace The_Future
                         // Open/close teleport
                     }
 
-                    if (RectangleHelper.IsCollision(player.PlayerArea, Object.Area) == true)
+                    if (RectangleHelper.IsCollision(player.PlayerArea, Object.Area))
                     {
-                        if (Object.IsCollisionResponseStatic == true)
+                        if (Object.IsCollisionResponseStatic)
                         {
                             player.ResolveStaticCollision(Object);
                         }
 
-                        else if (Object.ObjectType == EObjectType.Teleport && GameProgress.AreTeleportsActive[Object.ObjectNumber] == true)
+                        else
                         {
-                            map = new Map(Object.NextLevelPath, Content, player);
-                        }
+                            // more efficient than else if, could be sped up if every type had it's collision response in method
 
-                        else if (GameProgress.AreDialogsActive[Object.ObjectNumber] == true && Object.ObjectType == EObjectType.Dialog)
-                        {
-                            
-                            DialogManager.DisplayDialog(Object.DialogPath, dialogBox, Object.ObjectNumber);
-                            GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
-                        }
-
-                        else if (Object.ObjectType == EObjectType.Terminal && GameProgress.AreTerminalActive[Object.ObjectNumber] == true)
-                        {
-                            terminal = (Terminal)Object.Instance;                
-                            IsInTerminalArea = true;
-
-                            if (KeyboardManager.IsKeyPressed(Keys.Space))
+                            switch (Object.ObjectType)
                             {
-                                terminal.IsActive = true;
-                                IsPlayerMovementBlock = true; //can cause problems
-                            }
-                            else if (KeyboardManager.IsKeyPressed(Keys.Escape))
-                            {
-                                terminal.IsActive = false;
-                                IsPlayerMovementBlock = false;
-                            }
-                        }
+                                case EObjectType.Teleport:
+                                    if (GameProgress.AreTeleportsActive[Object.ObjectNumber]) map = new Map(Object.NextLevelPath, Content, player);
+                                    break;
+                                case EObjectType.Dialog:
+                                    if (GameProgress.AreDialogsActive[Object.ObjectNumber])
+                                    {
+                                        DialogManager.DisplayDialog(Object.DialogPath, dialogBox, Object.ObjectNumber);
+                                        GameProgress.AreDialogsActive[Object.ObjectNumber] = false;
+                                    }
+                                    break;
+                                case EObjectType.Terminal:
+                                    if (GameProgress.AreTerminalActive[Object.ObjectNumber])
+                                    {
+                                        terminal = (Terminal)Object.Instance;
+                                        IsInTerminalArea = true;
 
-                        else if (Object.ObjectType == EObjectType.Exercise)
-                        {
-                            exercise = (Exercise)Object.Instance;
-                            IsInExerciseArea = true;
+                                        if (KeyboardManager.IsKeyPressed(Keys.Space))
+                                        {
+                                            terminal.IsActive = true;
+                                            IsPlayerMovementBlock = true; //can cause problems
+                                        }
+                                        else if (KeyboardManager.IsKeyPressed(Keys.Escape))
+                                        {
+                                            terminal.IsActive = false;
+                                            IsPlayerMovementBlock = false;
+                                        }
+                                    }
+                                    break;
+                                case EObjectType.Exercise:
+                                    exercise = (Exercise)Object.Instance;
+                                    IsInExerciseArea = true;
 
-                            if (KeyboardManager.IsKeyPressed(Keys.Space))
-                            {
-                                exercise.IsActive = true;
-                                IsPlayerMovementBlock = true; //can cause problems
-                            }
-                            else if (KeyboardManager.IsKeyPressed(Keys.Escape))
-                            {
-                                exercise.IsActive = false;
-                                IsPlayerMovementBlock = false;
+                                    if (KeyboardManager.IsKeyPressed(Keys.Space))
+                                    {
+                                        exercise.IsActive = true;
+                                        IsPlayerMovementBlock = true; //can cause problems
+                                    }
+                                    else if (KeyboardManager.IsKeyPressed(Keys.Escape))
+                                    {
+                                        exercise.IsActive = false;
+                                        IsPlayerMovementBlock = false;
+                                    }
+                                    break;
                             }
                         }
                     }
